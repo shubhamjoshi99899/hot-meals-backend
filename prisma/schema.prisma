@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/hotmeal"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  phoneNumber  String    @unique
+  name         String?
+  isAdmin      Boolean   @default(false)
+  isDriver     Boolean   @default(false)
+  referralCode String?   @unique
+  referredBy   String? // referral code of inviter
+  addresses    Address[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Order        Order[]
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  label     String // e.g., "Home", "Work"
+  address   String
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+
+  user  User    @relation(fields: [userId], references: [id])
+  Order Order[]
+}
+
+model Branch {
+  id        String   @id @default(uuid())
+  name      String
+  location  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories Category[]
+  menuItems  MenuItem[]
+  orders     Order[]
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String
+  branchId  String
+  menuItems MenuItem[] // ➤ Relation TO MenuItem
+  createdAt DateTime   @default(now())
+
+  branch Branch @relation(fields: [branchId], references: [id])
+}
+
+model MenuItem {
+  id           String  @id @default(uuid())
+  name         String
+  description  String?
+  imageUrl     String?
+  isVeg        Boolean
+  isAvailable  Boolean @default(true)
+  priceOptions Json
+  categoryId   String
+  branchId     String
+
+  category Category @relation(fields: [categoryId], references: [id]) // ➤ Back-reference
+  branch   Branch   @relation(fields: [branchId], references: [id])
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  userId      String
+  branchId    String
+  addressId   String
+  items       Json // [{itemId, name, price, quantity}]
+  totalAmount Float
+  status      String // e.g., 'pending', 'preparing', 'delivered'
+  placedAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  branch  Branch  @relation(fields: [branchId], references: [id])
+  address Address @relation(fields: [addressId], references: [id])
+}
