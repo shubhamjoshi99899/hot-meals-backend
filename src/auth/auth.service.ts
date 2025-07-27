@@ -48,6 +48,22 @@ export class AuthService {
 
     const token = this.jwt.sign({ sub: user.id });
 
+    const welcomeCouponCode = 'WELCOME100';
+
+    const coupon = await this.prisma.coupon.findUnique({
+      where: { code: welcomeCouponCode },
+    });
+
+    if (coupon) {
+      await this.prisma.userCoupon.create({
+        data: {
+          userId: user.id,
+          couponId: coupon.id,
+          usageCount: 0,
+        },
+      });
+    }
+
     return {
       accessToken: token,
       user,
