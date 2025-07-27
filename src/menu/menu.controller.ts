@@ -33,4 +33,9 @@ export class MenuController {
   getAvailableItems(@Param('branchId') branchId: string) {
     return this.menuService.getMenuByBranch(branchId);
   }
+
+  @Get('items/category/:categoryId')
+  getItemsByCategory(@Param('categoryId') categoryId: string) {
+    return this.menuService.getItemsByCategory(categoryId);
+  }
 }

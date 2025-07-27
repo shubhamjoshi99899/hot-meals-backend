@@ -58,4 +58,11 @@ export class MenuService {
       include: { category: true },
     });
   }
+
+  async getItemsByCategory(categoryId: string) {
+    return this.prisma.menuItem.findMany({
+      where: { categoryId, isAvailable: true },
+      orderBy: { name: 'asc' },
+    });
+  }
 }
