@@ -1,14 +1,15 @@
 // src/branch/branch.controller.ts
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { BranchService } from './branch.service';
+import { CreateBranchDto } from './branch.dto';
 
 @Controller('branches')
 export class BranchController {
   constructor(private readonly branchService: BranchService) {}
 
   @Post()
-  async createBranch(@Body() body: { name: string; location: string }) {
-    return this.branchService.create(body.name, body.location);
+  async createBranch(@Body() body: CreateBranchDto) {
+    return this.branchService.create(body);
   }
 
   @Get()

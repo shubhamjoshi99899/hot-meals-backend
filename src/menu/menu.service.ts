@@ -24,7 +24,7 @@ export class MenuService {
   async addMenuItem(data: {
     name: string;
     description?: string;
-    imageUrl?: string;
+    imageUrls: string[];
     isVeg: boolean;
     isAvailable?: boolean;
     priceOptions: any;
@@ -35,7 +35,7 @@ export class MenuService {
       data: {
         name: data.name,
         description: data.description,
-        imageUrl: data.imageUrl,
+        imageUrl: data.imageUrls,
         isVeg: data.isVeg,
         isAvailable: data.isAvailable ?? true,
         priceOptions: data.priceOptions,
@@ -54,7 +54,7 @@ export class MenuService {
 
   async getMenuByBranch(branchId: string) {
     return this.prisma.menuItem.findMany({
-      where: { branchId, isAvailable: true },
+      where: { branchId },
       include: { category: true },
     });
   }

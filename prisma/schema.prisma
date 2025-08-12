@@ -37,16 +37,48 @@ model Address {
 }
 
 model Branch {
-  id        String   @id @default(uuid())
-  name      String
-  location  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String     @id @default(uuid())
+  name                  String
+  location              String     // keep this if already used elsewhere
+  address               String?    // ✅ optional
+  lat                   Float?
+  lng                   Float?
+  isActive              Boolean?   @default(true)
+  deliveryRadius        Float?
+  minOrderValue         Float?
+  deliveryFee           Float?
+  estimatedDeliveryTime Int?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 
-  categories Category[]
-  menuItems  MenuItem[]
-  orders     Order[]
+  categories            Category[]
+  menuItems             MenuItem[]
+  orders                Order[]
+
+   // Relation
+  details              BranchDetails?
 }
+
+
+model BranchDetails {
+  branchId             String          @id
+  subtitle             String
+  image                String
+  specialties          String[]        // stored as text[] in PostgreSQL
+  offers               String[]        // stored as text[] in PostgreSQL
+  rating               Float
+  deliveryTime         String
+  distance             String
+  menuCount            Int
+  isPopular            Boolean
+  updatedAt            DateTime        @updatedAt
+
+  // Relation
+  branch               Branch          @relation(fields: [branchId], references: [id], onDelete: Cascade)
+}
+
+
+
 
 model Category {
   id        String     @id @default(uuid())
@@ -62,7 +94,7 @@ model MenuItem {
   id           String  @id @default(uuid())
   name         String
   description  String?
-  imageUrl     String?
+  imageUrl     String[]
   isVeg        Boolean
   isAvailable  Boolean @default(true)
   priceOptions Json

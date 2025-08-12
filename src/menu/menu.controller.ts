@@ -1,6 +1,18 @@
 // src/menu/menu.controller.ts
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { MenuService } from './menu.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('menu')
 export class MenuController {
@@ -16,6 +28,7 @@ export class MenuController {
     return this.menuService.getCategoriesByBranch(branchId);
   }
 
+  // File upload + body data
   @Post('item')
   createMenuItem(@Body() body: any) {
     return this.menuService.addMenuItem(body);

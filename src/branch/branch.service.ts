@@ -6,9 +6,9 @@ import { PrismaService } from 'prisma/prisma.service';
 export class BranchService {
   constructor(private prisma: PrismaService) {}
 
-  async create(name: string, location: string) {
+  async create(data: any) {
     return this.prisma.branch.create({
-      data: { name, location },
+      data,
     });
   }
 

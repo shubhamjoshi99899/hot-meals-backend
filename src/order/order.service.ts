@@ -36,14 +36,25 @@ export class OrderService {
   }
 
   async getAllOrders() {
-    return this.prisma.order.findMany({
-      orderBy: { placedAt: 'desc' },
+    const orders = await this.prisma.order.findMany({
+      where: {},
+      include: {
+        user: true,
+        address: true,
+        driver: true,
+      },
     });
+    return orders;
   }
 
   async getOrdersByBranch(branchId: string) {
     return this.prisma.order.findMany({
       where: { branchId },
+      include: {
+        user: true,
+        address: true,
+        driver: true,
+      },
       orderBy: { placedAt: 'desc' },
     });
   }
@@ -62,9 +73,11 @@ export class OrderService {
     // update driver
     await this.prisma.driver.update({
       where: { id: driverId },
+
       data: { status: 'ASSIGNED', isAvailable: false },
     });
 
+    console.log(orderId);
     // update order
     const order = await this.prisma.order.update({
       where: { id: orderId },
