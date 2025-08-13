@@ -13,11 +13,13 @@ import { FileModule } from './file/file.module';
 import { LocationModule } from './location/location.module';
 import { ConfigModule } from '@nestjs/config';
 import { MapModule } from './map/map.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
     AuthModule,
     BranchModule,
+    CategoryModule, 
     MenuModule,
     OrderModule,
     UserModule,
