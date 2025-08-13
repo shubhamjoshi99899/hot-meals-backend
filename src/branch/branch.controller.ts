@@ -1,32 +1,34 @@
-// src/branch/branch.controller.ts
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { BranchService } from './branch.service';
-import { CreateBranchDto } from './branch.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { BranchService } from './branch.service';import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { CreateBranchDto, UpdateBranchDto } from './branch.dto';
 
 @Controller('branches')
+@UseGuards(JwtAuthGuard) // 2. Apply the guard to the entire controller
 export class BranchController {
   constructor(private readonly branchService: BranchService) {}
 
   @Post()
-  async createBranch(@Body() body: CreateBranchDto) {
-    return this.branchService.create(body);
+  create(@Body() createBranchDto: CreateBranchDto) {
+    return this.branchService.create(createBranchDto);
   }
 
   @Get()
-  async getAllBranches() {
+  findAll() {
     return this.branchService.findAll();
   }
 
   @Get(':id')
-  async getBranch(@Param('id') id: string) {
-    return this.branchService.findById(id);
+  findOne(@Param('id') id: string) {
+    return this.branchService.findOne(id);
   }
 
   @Patch(':id')
-  async updateBranch(
-    @Param('id') id: string,
-    @Body() body: { name?: string; location?: string },
-  ) {
-    return this.branchService.update(id, body);
+  update(@Param('id') id: string, @Body() updateBranchDto: UpdateBranchDto) {
+    return this.branchService.update(id, updateBranchDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.branchService.remove(id);
   }
 }

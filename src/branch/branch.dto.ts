@@ -15,3 +15,5 @@ export class CreateBranchDto {
 }
 
 // src/branch/dto/update-branch.dto.ts
+
+export class UpdateBranchDto extends PartialType(CreateBranchDto) {}

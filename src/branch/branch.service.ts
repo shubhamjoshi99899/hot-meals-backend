@@ -1,14 +1,14 @@
-// src/branch/branch.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { CreateBranchDto, UpdateBranchDto } from './branch.dto';
 
 @Injectable()
 export class BranchService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: any) {
+  async create(createBranchDto: CreateBranchDto) {
     return this.prisma.branch.create({
-      data,
+      data: createBranchDto,
     });
   }
 
@@ -16,16 +16,32 @@ export class BranchService {
     return this.prisma.branch.findMany();
   }
 
-  async findById(id: string) {
-    const branch = await this.prisma.branch.findUnique({ where: { id } });
-    if (!branch) throw new NotFoundException('Branch not found');
+  async findOne(id: string) {
+    const branch = await this.prisma.branch.findUnique({
+      where: { id },
+    });
+
+    if (!branch) {
+      throw new NotFoundException(`Branch with ID "${id}" not found`);
+    }
+
     return branch;
   }
 
-  async update(id: string, data: { name?: string; location?: string }) {
+  async update(id: string, updateBranchDto: UpdateBranchDto) {
+    // First, check if the branch exists
+    await this.findOne(id);
     return this.prisma.branch.update({
       where: { id },
-      data,
+      data: updateBranchDto,
+    });
+  }
+
+  async remove(id: string) {
+    // First, check if the branch exists
+    await this.findOne(id);
+    return this.prisma.branch.delete({
+      where: { id },
     });
   }
 }
